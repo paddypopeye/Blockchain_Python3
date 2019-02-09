@@ -21,11 +21,13 @@ def add_transaction(sender, recipient, amount=1.0):
 def mine_block():
     pass
 
+
 def get_transaction_value():
     '''Returns input of user(transaction amount) as a float'''
     tx_recipient =  input('Enter the recipient of the transaction')
     tx_amount = float(input('The transaction amount please'))
     return (tx_recipient, tx_amount)
+
 
 def print_blockchain_elements():
     '''Output all blocks of the chain'''
@@ -72,5 +74,6 @@ while waiting_for_input:
         if len(blockchain) >= 1:
             blockchain[0] = [2]
     elif user_choice == 'q':
+        sys.exit(0)
 
 
