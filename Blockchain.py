@@ -62,7 +62,7 @@ while waiting_for_input:
     print('Please Choose')
     print('1: Add a new transaction amount')
     print('2: Output the blockchain blocks')
-    print('h: Manipulate the cahin')
+    print('h: Manipulate the chain')
     print('q: Quit')
     user_choice = get_user_choice()
     if user_choice == 1:
