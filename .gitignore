@@ -1,4 +1,9 @@
-__pycache__/
+'__pycache__/'
+__pycache__/block.cpython-36.pyc
+__pycache__/hash_util.cpython-36.pyc
+__pycache__/printable.cpython-36.pyc
+__pycache__/transaction.cpython-36.pyc
+__pycache__/verification.cpython-36.pyc
 node_modules/
 .vscode/
 cryptocurrency/
