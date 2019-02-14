@@ -51,4 +51,3 @@ class Verification:
         # print("This is the GUESS_HASH", guess_hash)
         
         return guess_hash[0:2] == '00'
-
