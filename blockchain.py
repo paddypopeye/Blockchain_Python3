@@ -74,7 +74,7 @@ class Blockchain:
                         tx['signature'],
                         tx['amount'])                   
 
-                    updated_transactions.append(updated_transaction)
+                updated_transactions.append(updated_transaction)
                 self.__open_transactions = updated_transactions
         except:
             pass

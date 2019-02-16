@@ -1,7 +1,6 @@
 <!DOCTYPE html>
+<html lang="en">
 
-<meta charset="UTF-8">
-<html lang="en"></html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,7 +85,7 @@
                     </div>
                 </div>
                 <div class="col text-right">
-                    <h2>Funds: {{ funds }}</h2>
+                    <h2>Funds: {{ funds.toFixed(2) }}</h2>
                 </div>
             </div>
             <hr>
@@ -133,7 +132,7 @@
             <div class="row my-3">
                 <div class="col">
                     <button class="btn btn-primary" @click="onLoadData">{{ view === 'chain' ? 'Load Blockchain' : 'Load Transactions' }}</button>
-                    <button class="btn btn-success" @click="onMine">Mine Coins</button>
+                    <button v-if="view === 'chain' && wallet" class="btn btn-success" @click="onMine">Mine Coins</button>
                 </div>
             </div>
             <div class="row">
@@ -197,11 +196,8 @@
         new Vue({
             el: '#app',
             data: {
-                blockchain: [   
-                ],
-                openTransactions: [    
-                ],
-
+                blockchain: [],
+                openTransactions: [],
                 wallet: null,
                 view: 'chain',
                 walletLoading: false,
@@ -217,102 +213,116 @@
                 }
             },
             computed: {
-                loadedData:  () => {
-                    if (this.view === 'chain') {
-                        return this.blockchain;
-                    } else {
-                        return this.openTransactions
-                    }
+                loadedData: function () {
+                    (this.view === 'chain') ? this.blockchain:this.openTransactions
                 }
             },
             methods: {
-                onCreateWallet:() => {
+                onCreateWallet: function () {
                     // Send Http request to create a new wallet (and return keys)
-                    let vm = this
-                    walletLoading = true
-                    axios.post('/wallet').then((response) => {
-                        vm.error = null
-                        vm.success = 'Created Wallet: Public Key: ' + response.data.public_key + 'Private Key: ' + response.data.private_key
-                        vm.wallet = {
-                                public_key : response.data.public_key,
-                                private_key : response.data.private_key
+                    var vm = this;
+                    this.walletLoading = true
+                    axios.post('/wallet')
+                        .then(function (response) {
+                            vm.error = null;
+                            vm.success = 'Created Wallet! Public Key: ' + response.data.public_key + ', Private Key: ' + response.data.private_key;
+                            vm.wallet = {
+                                public_key: response.data.public_key,
+                                private_key: response.data.private_key
                             }
-                            walletLoading = false
-                        }).catch((error) => {
-                            vm.success = null
-                            vm.error = error.data.messsage
-                            vm.wallet = null
-                            walletLoading =false
+                            vm.funds = response.data.funds;
+                            vm.walletLoading = false
                         })
+                        .catch(function (error) {
+                            vm.success = null;
+                            vm.error = error.response.data.message
+                            vm.wallet = null
+                            vm.walletLoading = false
+                        });
                 },
-
-                onLoadWallet: () => {
+                onLoadWallet: function () {
                     // Send Http request to load an existing wallet (from a file on the server)
-                    let vm = this
-                    walletLoading = true
-                    axios.get('/wallet').then((response) => {
-                        vm.error = null
-                        vm.success = 'Created Wallet: Public Key: ' + response.data.public_key + 'Private Key: ' + response.data.private_key
-                        vm.wallet = {
-                                public_key : response.data.public_key,
-                                private_key : response.data.private_key
+                    var vm = this;
+                    this.walletLoading = true
+                    axios.get('/wallet')
+                        .then(function (response) {
+                            vm.error = null;
+                            vm.success = 'Created Wallet! Public Key: ' + response.data.public_key + ', Private Key: ' + response.data.private_key;
+                            vm.wallet = {
+                                public_key: response.data.public_key,
+                                private_key: response.data.private_key
                             }
-                            vm.funds = response.data.funds
-                            walletLoading = false
-                        }).catch((error) => {
-                            vm.success = null
-                            vm.error = error.data.messsage
-                            vm.wallet = null
-                            walletLoading =false
+                            vm.funds = response.data.funds;
+                            vm.walletLoading = false;
                         })
+                        .catch(function (error) {
+                            vm.success = null;
+                            vm.error = error.response.data.message;
+                            vm.wallet = null;
+                            vm.walletLoading = false;
+                        });
                 },
                 onSendTx: function () {
-                    // SendTransaction to backend
-                    if (Math.random() > 0.5) {
-                        this.error = null
-                        this.success = 'Successfully stored transaction!'
-                        this.funds = this.funds - this.outgoingTx.amount
-                      } else {
-                        this.success = null;
-                        this.error = 'Something went wrong with the transaction!'
-                    }
+                    // Send Transaction to backend
+                    this.txLoading = true;
+                    var vm = this;
+                    axios.post('/transaction', {
+                        recipient: this.outgoingTx.recipient,
+                        amount: this.outgoingTx.amount
+                    })
+                    .then(function(response) {
+                        vm.error = null;
+                        vm.success = response.data.message;
+                        console.log(response.data);
+                        vm.funds = response.data.funds;
+                        vm.txLoading = false;
+                    })
+                    .catch(function (error) {
+                        vm.success = null;
+                        vm.error = error.response.data.message;
+                        vm.txLoading = false;
+                    });
                 },
-                onMine: () => {
-                    let vm = this
-                    axios.post('/mine').then((response) => {
-                            vm.success = response.data.messsage
-                            vm.error =  null
-                            console.log(response.data)
-                            vm.funds = response.data.funds
-                    }).catch((error) => {
-                        vm.success = null
-                        vm.error = error.response.data.messsage
-                    })},
-                    
+                onMine: function () {
+                    var vm = this
+                    axios.post('/mine')
+                        .then(function(response) {
+                            vm.error = null;
+                            vm.success = response.data.message;
+                            console.log(response.data);
+                            vm.funds = response.data.funds;
+                        })
+                        .catch(function (error) {
+                            vm.success = null;
+                            vm.error = error.response.data.message;
+                        });
+                },
                 onLoadData: function () {
-                    if (this.view === ' ') {
+                    if (this.view === 'chain') {
                         // Load blockchain data
-                        let vm  = this
+                        var vm = this
                         this.dataLoading = true
                         axios.get('/chain')
-                        .then((response) => {
-                            vm.blockchain = (response.data)
-                        }).catch((error) => {
-                            vm.error = 'Something went wrong loading data'
-                        })
-                        this.dataLoading = false
+                            .then(function (response) {
+                                vm.blockchain = response.data
+                                vm.dataLoading = false
+                            })
+                            .catch(function (error) {
+                                vm.dataLoading = false
+                                vm.error = 'Something went wrong.'
+                            });
                     } else {
                         // Load transaction data
-                        let vm  = this
-                        this.dataLoading - true
+                        var vm = this
                         axios.get('/transactions')
-                        .then((response) => {
-                            vm.openTransactions = (response.data)
-                        }).catch((error => {
-                            vm.dataLoading = false
-                            vm.error = 'Something went wrong loading trasnactions'
-                        }))
-                        this.dataLoading = false
+                            .then(function (response) {
+                                vm.openTransactions = response.data
+                                vm.dataLoading = false
+                            })
+                            .catch(function (error) {
+                                vm.dataLoading = false
+                                vm.error = 'Something went wrong.'
+                            });
                     }
                 }
             }

@@ -1,4 +1,4 @@
-'__pycache__/'
+__pycache__/
 __pycache__/block.cpython-36.pyc
 __pycache__/hash_util.cpython-36.pyc
 __pycache__/printable.cpython-36.pyc
@@ -11,3 +11,18 @@ cryptocurrency/
 '*.gpg'
 '*.pyc'
 '*.txt'
+__pycache__/block.cpython-37.pyc
+__pycache__/blockchain.cpython-36.pyc
+__pycache__/blockchain.cpython-37.pyc
+__pycache__/transaction.cpython-37.pyc
+__pycache__/wallet.cpython-36.pyc
+__pycache__/wallet.cpython-37.pyc
+ui/node.html.old
+utility/__pycache__/__init__.cpython-36.pyc
+utility/__pycache__/__init__.cpython-37.pyc
+utility/__pycache__/hash_util.cpython-36.pyc
+utility/__pycache__/hash_util.cpython-37.pyc
+utility/__pycache__/printable.cpython-36.pyc
+utility/__pycache__/printable.cpython-37.pyc
+utility/__pycache__/verification.cpython-36.pyc
+utility/__pycache__/verification.cpython-37.pyc
