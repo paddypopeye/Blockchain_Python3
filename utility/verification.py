@@ -6,6 +6,8 @@ class Verification:
     def verify_transactions(cls, open_transactions, get_balance):
         return all([cls.verify_transaction(tx, get_balance, False)\
         for tx in open_transactions()])
+
+
     @staticmethod
     def verify_transaction(transaction, get_balance, check_funds=True):
         '''Verifies the validity of the given transaction,
@@ -15,7 +17,7 @@ class Verification:
                 transaction: the transaction to validate
         '''
         if check_funds:
-            sender_balance = get_balance()
+            sender_balance = get_balance(transaction.sender)
             return sender_balance >= transaction.amount and Wallet.verify_transaction(transaction)
         else:
             return Wallet.verify_transaction(transaction)
